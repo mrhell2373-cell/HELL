@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل الصلاة - التحدي اليومي ✨</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            overflow-x: hidden;
+            background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 60%, #020617 100%);
+            background-attachment: fixed;
+        }
+        
+        /* Smooth Entrance Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Falling Petals Animation */
+        .petal {
+            position: fixed;
+            top: -10vh;
+            z-index: 9999;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0.2; }
+        }
+
+        /* Romantic Modal Animation */
+        .modal-enter {
+            animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes scaleUp {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen py-6 px-4 flex flex-col justify-between relative">
+
+    <div class="max-w-md mx-auto space-y-6 w-full relative z-10 fade-in-up">
+        
+        <!-- Header -->
+        <div class="text-center space-y-2">
+            <h1 class="text-3xl font-black text-emerald-400">سجل الصلاة اليومي 🕌</h1>
+            <p class="text-slate-400 text-sm">"إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَوْقُوتًا"</p>
+        </div>
+
+        <!-- شريط تقدم الإنجاز اليومي الإيماني -->
+        <div class="bg-slate-800/90 backdrop-blur-md border border-slate-700/80 p-4 rounded-2xl shadow-xl space-y-2">
+            <div class="flex justify-between items-center text-xs font-bold">
+                <span class="text-amber-400 flex items-center gap-1">🌟 نسبة الإنجاز اليومي الموحدة:</span>
+                <span id="totalProgressText" class="text-emerald-300">0%</span>
+            </div>
+            <div class="w-full bg-slate-700/80 rounded-full h-3 overflow-hidden p-0.5 border border-slate-600">
+                <div id="totalProgressBar" class="bg-gradient-to-r from-emerald-500 via-teal-400 to-pink-500 h-2 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Date & Motivational Warning -->
+        <div class="bg-slate-800/80 backdrop-blur-md border border-slate-700/80 p-4 rounded-2xl shadow-xl flex justify-between items-center">
+            <div>
+                <span class="text-xs text-slate-400 block">تاريخ اليوم (يتحدث تلقائياً)</span>
+                <span id="currentDate" class="font-bold text-lg text-emerald-300">--/--/----</span>
+            </div>
+            <div class="text-left max-w-[150px]">
+                <span class="text-xs text-slate-400 block">قانون التحدي 🔥</span>
+                <span class="font-bold text-xs text-rose-400">اللي هيوقف هيتعاقب!</span>
+            </div>
+        </div>
+
+        <!-- Daily Rotating Cute Message Banner -->
+        <div class="bg-gradient-to-r from-emerald-900/70 to-teal-900/70 backdrop-blur border border-emerald-600/40 p-4 rounded-2xl shadow-md text-center space-y-1">
+            <span class="text-xs text-emerald-300 font-bold">✨ رسالة اليوم لعيونكم ✨</span>
+            <p id="dailyMessageText" class="text-sm font-semibold text-white">جاري تحميل رسالة اليوم...</p>
+        </div>
+
+        <!-- Users Section -->
+        <div class="grid grid-cols-1 gap-6">
+            
+            <!-- User 1 -->
+            <div class="bg-slate-800/90 backdrop-blur border border-slate-700 rounded-2xl p-5 shadow-xl space-y-4 transition-all duration-300 hover:border-emerald-500/40">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">👤</span>
+                        <input type="text" id="name1Input" oninput="updateName('user1', this.value)" class="bg-slate-700/80 text-emerald-300 font-bold text-lg px-2 py-1 rounded-lg border border-slate-600 focus:outline-none focus:border-emerald-500 w-32" placeholder="اكتب اسمه">
+                    </div>
+                    <div class="bg-emerald-950 text-emerald-300 text-xs px-3 py-1 rounded-full font-bold border border-emerald-800">
+                        السكور: <span id="score1">0</span> / 5
+                    </div>
+                </div>
+                <div id="list1" class="space-y-3"></div>
+            </div>
+
+            <!-- User 2 -->
+            <div class="bg-slate-800/90 backdrop-blur border border-slate-700 rounded-2xl p-5 shadow-xl space-y-4 transition-all duration-300 hover:border-pink-500/40">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">👩‍💻</span>
+                        <input type="text" id="name2Input" oninput="updateName('user2', this.value)" class="bg-slate-700/80 text-pink-300 font-bold text-lg px-2 py-1 rounded-lg border border-slate-600 focus:outline-none focus:border-pink-500 w-32" placeholder="اكتب اسمها">
+                    </div>
+                    <div class="bg-pink-950 text-pink-300 text-xs px-3 py-1 rounded-full font-bold border border-pink-800">
+                        السكور: <span id="score2">0</span> / 5
+                    </div>
+                </div>
+                <div id="list2" class="space-y-3"></div>
+            </div>
+
+        </div>
+
+        <!-- Azkar Section After Prayer -->
+        <div class="bg-slate-800/90 backdrop-blur border border-slate-700 rounded-2xl p-4 shadow-xl space-y-3">
+            <h3 class="text-center font-bold text-amber-400 text-sm">📿 أذكار مباركة بعد الصلاة</h3>
+            <div class="grid grid-cols-1 gap-2 text-xs">
+                <div class="bg-slate-700/50 p-2.5 rounded-xl flex justify-between items-center">
+                    <span>"سبحان الله وبحمده، سبحان الله العظيم"</span>
+                    <button onclick="incrementZikr(this)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1 rounded-lg font-bold shadow active:scale-95 transition-transform">تسبيح (<span>0</span>)</button>
+                </div>
+                <div class="bg-slate-700/50 p-2.5 rounded-xl flex justify-between items-center">
+                    <span>"لا إله إلا الله وحد لا شريك له"</span>
+                    <button onclick="incrementZikr(this)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1 rounded-lg font-bold shadow active:scale-95 transition-transform">تسبيح (<span>0</span>)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reset Button -->
+        <div class="pt-2">
+            <button onclick="openResetModal()" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all active:scale-95 text-sm">
+                🔄 إعادة تعيين صلوات اليوم الجديد يدويًا
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Custom Reset Confirmation Modal -->
+    <div id="resetModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 modal-enter shadow-2xl">
+            <div class="text-4xl">🔄</div>
+            <h2 class="text-xl font-bold text-amber-300">إعادة تعيين اليوم الجديد</h2>
+            <p class="text-sm text-slate-300">متأكد إنك عاوز تصفر السكور وتبدأ يوم جديد؟</p>
+            <div class="flex gap-3 pt-2">
+                <button onclick="confirmReset()" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-2.5 rounded-xl shadow-lg transition-all text-sm">نعم، تصفير</button>
+                <button onclick="closeResetModal()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl transition-all text-sm">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Romantic Completion Popup Modal (Dynamic Name per user) -->
+    <div id="congratsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-gradient-to-br from-rose-950 via-slate-900 to-emerald-950 border-2 border-rose-500/50 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 modal-enter shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-6 -top-6 text-6xl opacity-20">🌸</div>
+            <div class="text-4xl">👑✨</div>
+            <h2 id="congratsTitle" class="text-xl font-black text-rose-300">ألف مبروك الإنجاز العظيم!</h2>
+            <p id="congratsText" class="text-sm font-medium text-slate-200 leading-relaxed"></p>
+            <button onclick="closeModal()" class="w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition-all text-sm">
+                الله يبارك فيك/ي ويتقبل 🤍
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer with Creator Signature & WhatsApp Support -->
+    <footer class="mt-8 text-center space-y-3 border-t border-slate-800/80 pt-4 relative z-10 fade-in-up">
+        <div class="text-amber-400 font-bold tracking-wider text-base">
+            𖢫 𝕄ℝ ℍ𝔼𝕃𝕃 𖢫
+        </div>
+        <div>
+            <a href="https://wa.me/201001602373?text=مرحباً%20MR%20HELL،%20لدي%20استفسار%20أو%20مشكلة%20في%20تطبيق%20سجل%20الصلاة" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 px-4 rounded-full shadow-lg transition-all active:scale-95">
+                <span>💬</span> تواصل معي للدعم الفني (واتساب)
+            </a>
+        </div>
+        <p class="text-[10px] text-slate-500">جميع الحقوق محفوظة © التحدي الإيماني 2026</p>
+    </footer>
+
+    <script>
+        const prayers = [
+            { id: 'fajr', name: 'الفجر', icon: '🌅' },
+            { id: 'dhuhr', name: 'الظهر', icon: '☀️' },
+            { id: 'asr', name: 'العصر', icon: '⛅' },
+            { id: 'maghrib', name: 'المغرب', icon: '🌇' },
+            { id: 'isha', name: 'العشاء', icon: '🌙' }
+        ];
+
+        // Format Date
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const todayDateString = new Date().toLocaleDateString('ar-EG', dateOptions);
+        document.getElementById('currentDate').innerText = todayDateString;
+
+        // Daily Rotating Motivational Messages
+        const cuteMessages = [
+            "الصلاة تنور قلبك وتخلي يومك أجمل بكتير، استمرو يا بطلين! ✨",
+            "جنة ربنا تستاهل كل تعب، شدوا حيلكم ومفيش تراجع اليوم! 💪",
+            "أنتوا قدها يا أحلى ثنائي في الالتزام، حافظوا على السكور كامل! 🌸",
+            "كل سجدة تقربكم خطوة للجنة، ربنا يثبت خطاكم ويجمعكم فيها 🤍",
+            "الكسل ممنوع، والعقاب مستني المتاخر! يلا خلصوا صلواتكم 🔥"
+        ];
+        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+        document.getElementById('dailyMessageText').innerText = cuteMessages[dayOfYear % cuteMessages.length];
+
+        // Rotating Romantic Completion Messages
+        const completionMessages = [
+            "ما شاء الله! ختمت الصلوات الخمسة بكل حب وتفانٍ.. ربنا يكتب لك بكل ركعة سعادة تملأ قلبك وتثبتك على طاعته 🌸🤍",
+            "الله أكبر! إنجاز يفرح القلب ويزيد النور في وجهك. استمر في هذا الثبات الجميل ولا تتوقف أبداً ✨🌹",
+            "يا جمال التزامك! الصلوات كاملة والسكور عالي.. هنيئاً لك هذا القرب الطاهر من الرحمن 🌷🕊️",
+            "كل صلاة صليتها اليوم هي نور في طريقك.. فخور بانتظامك، ربنا يثبتك ويجعلك دائماً من المتميزين 💫🤍"
+        ];
+
+        // Falling Petals Effect
+        function createFallingPetals() {
+            const symbols = ['🌸', '🌹', '✨', '🌷', '🤍'];
+            for (let i = 0; i < 15; i++) {
+                const petal = document.createElement('div');
+                petal.classList.add('petal');
+                petal.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                petal.style.left = Math.random() * 100 + 'vw';
+                petal.style.fontSize = (Math.random() * 12 + 16) + 'px';
+                petal.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(petal);
+                setTimeout(() => petal.remove(), 4000);
+            }
+        }
+
+        // Automatic Day Reset & State Management
+        function getSavedState() {
+            const saved = localStorage.getItem('prayer_tracker_state_v5');
+            const todayKey = new Date().toDateString();
+            
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.lastDate !== todayKey) {
+                    parsed.user1.prayers = { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false };
+                    parsed.user2.prayers = { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false };
+                    parsed.lastDate = todayKey;
+                    localStorage.setItem('prayer_tracker_state_v5', JSON.stringify(parsed));
+                }
+                return parsed;
+            }
+
+            return {
+                lastDate: todayKey,
+                user1: { name: 'محمد', prayers: { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false } },
+                user2: { name: 'حنين', prayers: { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false } }
+            };
+        }
+
+        let state = getSavedState();
+
+        document.getElementById('name1Input').value = state.user1.name;
+        document.getElementById('name2Input').value = state.user2.name;
+
+        function saveState() {
+            state.lastDate = new Date().toDateString();
+            localStorage.setItem('prayer_tracker_state_v5', JSON.stringify(state));
+            render();
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'prayer_tracker_state_v5') {
+                state = JSON.parse(e.newValue);
+                document.getElementById('name1Input').value = state.user1.name;
+                document.getElementById('name2Input').value = state.user2.name;
+                render();
+            }
+        });
+
+        function updateName(user, newName) {
+            state[user].name = newName || (user === 'user1' ? 'محمد' : 'حنين');
+            saveState();
+        }
+
+        function togglePrayer(user, prayerId) {
+            const currentVal = state[user].prayers[prayerId];
+            state[user].prayers[prayerId] = !currentVal;
+
+            if (!currentVal) {
+                createFallingPetals();
+            }
+
+            saveState();
+
+            // Check if user completed all 5 prayers individually
+            const userPrayers = state[user].prayers;
+            const allCompleted = Object.values(userPrayers).every(val => val === true);
+            if (allCompleted && !currentVal) {
+                setTimeout(() => {
+                    createFallingPetals();
+                    const randomMsg = completionMessages[Math.floor(Math.random() * completionMessages.length)];
+                    const currentUserName = state[user].name;
+                    document.getElementById('congratsTitle').innerText = `كفووو يا ${currentUserName}! 🌟`;
+                    document.getElementById('congratsText').innerText = randomMsg;
+                    document.getElementById('congratsModal').classList.remove('hidden');
+                }, 400);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('congratsModal').classList.add('hidden');
+        }
+
+        function openResetModal() {
+            document.getElementById('resetModal').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('resetModal').classList.add('hidden');
+        }
+
+        function confirmReset() {
+            state.user1.prayers = { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false };
+            state.user2.prayers = { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false };
+            saveState();
+            closeResetModal();
+        }
+
+        function incrementZikr(btn) {
+            const span = btn.querySelector('span');
+            let count = parseInt(span.innerText);
+            span.innerText = count + 1;
+            createFallingPetals();
+        }
+
+        function render() {
+            // Render User 1
+            let list1HTML = '';
+            let count1 = 0;
+            prayers.forEach(p => {
+                const checked = state.user1.prayers[p.id];
+                if(checked) count1++;
+                list1HTML += `
+                    <div onclick="togglePrayer('user1', '${p.id}')" class="flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all border ${checked ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-200 shadow-sm' : 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700'}">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">${p.icon}</span>
+                            <span class="font-bold">${p.name}</span>
+                        </div>
+                        <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${checked ? 'bg-emerald-500 border-emerald-400 text-slate-950 font-bold scale-105' : 'border-slate-500'}">
+                            ${checked ? '✓' : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('list1').innerHTML = list1HTML;
+            document.getElementById('score1').innerText = count1;
+
+            // Render User 2
+            let list2HTML = '';
+            let count2 = 0;
+            prayers.forEach(p => {
+                const checked = state.user2.prayers[p.id];
+                if(checked) count2++;
+                list2HTML += `
+                    <div onclick="togglePrayer('user2', '${p.id}')" class="flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all border ${checked ? 'bg-pink-950/40 border-pink-500/50 text-pink-200 shadow-sm' : 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700'}">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">${p.icon}</span>
+                            <span class="font-bold">${p.name}</span>
+                        </div>
+                        <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${checked ? 'bg-pink-500 border-pink-400 text-slate-950 font-bold scale-105' : 'border-slate-500'}">
+                            ${checked ? '✓' : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('list2').innerHTML = list2HTML;
+            document.getElementById('score2').innerText = count2;
+
+            // Update Progress Bar
+            const totalPercent = Math.round(((count1 + count2) / 10) * 100);
+            document.getElementById('totalProgressBar').style.width = `${totalPercent}%`;
+            document.getElementById('totalProgressText').innerText = `${totalPercent}%`;
+        }
+
+        render();
+    </script>
+</body>
+</html>
